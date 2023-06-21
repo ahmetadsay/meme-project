@@ -1,12 +1,13 @@
 'use client'
 import { useState } from 'react';
 import { useQuery } from 'react-query';
+import firstMeme from '../public/memes.png'
 
 export default function Home() {
   const [meme, setMeme] = useState({
     topText: '',
     bottomText: '',
-    randomImage: '',
+    randomImage: firstMeme,
   });
 
   const { isLoading, error, data } = useQuery('repoData', () =>
@@ -26,6 +27,15 @@ export default function Home() {
     }));
   }
 
+  const upperCase = (event) => {
+    const { name, value } = event.target;
+    const transformedValue = name === 'topText' || name === 'bottomText' ? value.toUpperCase() : value;
+    setMeme((prevMeme) => ({
+      ...prevMeme,
+      [name]: transformedValue,
+    }));
+  }
+
   function getMemeImage() {
     const randomNumber = Math.floor(Math.random() * memes.length);
     const url = memes[randomNumber].url;
@@ -33,6 +43,15 @@ export default function Home() {
       ...prevMeme,
       randomImage: url,
     }));
+  }
+
+  function resetButton () {
+    setMeme(prevMeme => ({
+      ...prevMeme,
+       topText: '',
+       bottomText: ''
+    }))
+  
   }
 
   return (
@@ -46,11 +65,12 @@ export default function Home() {
           value={meme.topText}
           onChange={handleChange}
         />
-          <div className=" flex justify-center items-center">
-        <img src={meme.randomImage} className=" w-72 h-72 " alt="Meme" />
-        <h2 className=" text-white">{meme.topText}</h2>
-        <h2 className="">{meme.bottomText}</h2>
-      </div>
+       <div className="flex justify-center items-center">
+  <h2 className="absolute text-white  -translate-y-10 left-1/2 transform -translate-x-1/2">{meme.topText}</h2>
+  <img src={meme.randomImage} className=" w-96 h-96" alt="Meme" />
+  <h2 className="absolute bottom-0 left-1/2 transform -translate-x-1/2">{meme.bottomText}</h2>
+</div>
+
         <input
           type="text"
           placeholder="Bottom text"
@@ -59,8 +79,11 @@ export default function Home() {
           value={meme.bottomText}
           onChange={handleChange}
         />
-        <button className="form--button" onClick={getMemeImage}>
+        <button className="" onClick={getMemeImage}>
           Get a new meme image 🖼
+        </button>
+        <button className="" onClick={resetButton}>
+         Reset
         </button>
       </div>
     
